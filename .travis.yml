@@ -1,0 +1,23 @@
+language: node_js
+
+notifications:
+  email:
+    recipients:
+      - keithchiang@mirrormedia.mg
+    on_success: change
+    on_failure: always
+
+node_js:
+  - "stable"
+
+before_install:
+  - npm install -g npm
+
+before_install:
+  - npm install -g yarn --cache-min 999999999
+
+install:
+  - yarn install
+
+after_script:
+  - npm run test api
