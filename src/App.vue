@@ -9,8 +9,17 @@
 
 <script>
   import { SECTIONS_DEFAULT, } from './constants'
+  import { getToken, } from './util/services'
   import AppHeader from './components/AppHeader.vue'
+
+  const debug = require('debug')('CLIENT:App')
+  const cookie = getToken()
+
   export default {
+    beforeMount () {
+      debug('App.vue')
+      return this.$store.dispatch('GET_PROFILE', { params: { cookie, }, })
+    },
     components: {
       'app-header': AppHeader,
     },

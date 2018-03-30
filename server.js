@@ -142,10 +142,10 @@ function render (req, res, next) {
   res.setHeader("Server", serverInfo)
 
   const cookies = new Cookies( req, res, {} )
-  const readrid = cookies.get('readrid')
-  if (!readrid) {
-    cookies.set('readrid', uuidv4(), { httpOnly: false, expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) })
-  }
+  // const readrid = cookies.get('readrid')
+  // if (!readrid) {
+  //   cookies.set('readrid', uuidv4(), { httpOnly: false, expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) })
+  // }
 
   let context = {
     title: 'Readr',

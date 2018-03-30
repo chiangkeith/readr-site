@@ -14,6 +14,7 @@
   import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   
+  const debug = require('debug')('CLIENT:Login')
   export default {
     components: {
       'app-header': AppHeader,
@@ -35,6 +36,11 @@
     },
     name: 'login-page',
     methods: {},
+    beforeMount () {
+      debug('Login beforeMount')
+      debug('Login beforeMount')
+      debug('Login beforeMount')
+    },
     mounted () {
       this.isClientSide = true
       this.isLoggedIn && location.replace('/')

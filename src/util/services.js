@@ -61,10 +61,10 @@ export function removeToken () {
     resolve()
   })
 }
-export function getProfile () {
+export function getProfile (cookie) {
   return new Promise((resolve, reject) => {
     debug('Going to get profile.')
-    const token = getToken()
+    const token = cookie || getToken()
     if (token) {
       const url = `${host}/api/profile`
       superagent

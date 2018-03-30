@@ -155,6 +155,7 @@
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+  const debug = require('debug')('CLIENT:Admin')
 
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params, })
@@ -363,6 +364,9 @@
       },
     },
     beforeMount () {
+      debug('Admin')
+      debug('Admin')
+      debug('Admin')
       this.loading = true
       this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {}),
