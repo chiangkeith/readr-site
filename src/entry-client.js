@@ -11,35 +11,43 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
+const { app, i18n, router, store, } = createApp()
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
   beforeRouteEnter (to, from, next) {
+    const cookie = getToken()
     const permission = get(to, [ 'meta', 'permission', ])
+    debug('store.state.profile', store.state.profile)
+    const preRouteInit = cookie ? [
+      store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, },}),
+      store.dispatch('GET_PROFILE', { params: { cookie, },}),
+    ] : [ new Promise((rslv) => rslv()), ]
     debug('router link enter somewhere.', to, from)
     debug('permission', permission)
-    if (permission) {
-      next(vm => { 
-        const cookie = getToken()
-        debug('cookie', cookie)
-        if (cookie) {
-          const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor') 
-          debug('role', role)
-          if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
-            /** User doesn't have the right to go to route "to". So, go back to route "from" */
-            debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
-            next('/')
+    Promise.all([ ...preRouteInit, ]).then(() => {
+      if (permission) {
+        next(vm => { 
+          debug('cookie', cookie)
+          if (cookie) {
+            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor') 
+            debug('role', role)
+            if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
+              /** User doesn't have the right to go to route "to". So, go back to route "from" */
+              debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
+              next('/')
+            }
+          } else {
+            /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
+            debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
+            next('/login')            
           }
-        } else {
-          /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
-          debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
-          next('/login')            
-        }
-      }) 
-    } else {
-      /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
-      next()
-    }
+        }) 
+      } else {
+        /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
+        next()
+      }
+    })
   },
   beforeRouteUpdate (to, from, next) {
     debug('router link to somewhere.', to.fullPath)
@@ -54,8 +62,6 @@ Vue.mixin({
     }
   },
 })
-
-const { app, i18n, router, store, } = createApp()
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.

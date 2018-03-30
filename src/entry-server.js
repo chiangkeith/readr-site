@@ -78,6 +78,8 @@ export default context => {
           // inline the state in the HTML response. This allows the client-side
           // store to pick-up the server-side state without having to duplicate
           // the initial data fetching on the client.
+          // store.state.profile = {}
+          // store.state.isLoggedIn = false
           context.state = store.state
           resolve(app)
         }).catch(reject)
